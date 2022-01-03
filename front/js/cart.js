@@ -1,3 +1,4 @@
+console.log("yay");
 (async function () {
   displayCart();
 })()

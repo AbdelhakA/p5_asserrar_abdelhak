@@ -1,8 +1,10 @@
+console.log("yo");
+
 (async function () {
     const items = await getItems()
     
     for (item of items) {
-       displayItem(item)
+       displayItem(item);
        
     }
    const colors = item.colors;
