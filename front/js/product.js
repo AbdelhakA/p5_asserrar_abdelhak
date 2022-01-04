@@ -27,7 +27,7 @@ console.log("yo");
         var quantity = document.getElementById('quantity').value;
 
         if(index != 0 && quantity > 0) { //on vérifie que la couleur a été choisie et que la quantitée n'est pas à 0
-            console.log('top')
+            console.log('produit ajouté au panier')
             addPanier(index, colors, id, quantity);
             // verifOrdre();
         }
