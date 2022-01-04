@@ -10,31 +10,31 @@ let displayTab = [];
 if(taille != 0) {
     for (var i = 0; i < localStorage.length; i++) {
         let key = localStorage.key(i);
-        console.log(key)
+        // console.log(key)
         let wayOut = localStorage.getItem(key);
-        console.log(wayOut)
+        // console.log(wayOut)
         let wayoutJson = JSON.parse(wayOut);
-        console.log(wayoutJson)
+        // console.log(wayoutJson)
         let itemLink = "http://localhost:3000/api/products/" + wayoutJson.itemId;
-        console.log(itemLink)
+        // console.log(itemLink)
         let id_produit = wayoutJson.itemId;
-        console.log(id_produit)
+        // console.log(id_produit)
         let couleur = wayoutJson._color;
-        console.log(couleur)
+        // console.log(couleur)
         
         
         
         const item = await getProducts(itemLink);
-        console.log(item)
+        // console.log(item)
         let product = {
             id: item._id,
             imageUrl: item.imageUrl,
               name: item.name,
               price: parseInt(item.price),
-              quantité: parseInt(wayoutJson._quantity),
+            //   quantité: parseInt(wayoutJson._quantity),
             
         }
-        console.log(product)
+        // console.log(product)
         console.log('-------------------------')
         let nom = item.name;
         console.log(nom)
@@ -48,6 +48,8 @@ if(taille != 0) {
         console.log(desc)
         let alterText = item.altTxt;
         console.log(alterText)
+        let quantite = parseInt(wayoutJson._quantity);
+        console.log(quantite)
         
          
          
@@ -72,12 +74,12 @@ else {
 function getProducts(itemLink) { //fonction qui récupère l'article avec fetch et qui le renvoie que lorsqu'il a reçu la réponse.
 return fetch(itemLink)
     .then(function (httpBodyResponse) {
-        console.log(httpBodyResponse.json)
+        // console.log(httpBodyResponse.json)
         return httpBodyResponse.json()
         
     })
     .then(function (items) {
-        console.log(items)
+        // console.log(items)
         return items
     })
     .catch(function (error) {
