@@ -85,7 +85,7 @@ function suppression() {
 
     let pieces = document.getElementsByClassName("deleteItem");
 
-    let maFonction = function() {
+    let actionSuppr = function() {
         var attribute = this.getAttribute("id");
         var parentPiece = ":" + attribute;
         var piece = document.getElementById(parentPiece);
@@ -94,11 +94,45 @@ function suppression() {
         }
         document.getElementById(parentPiece).remove(); // quand il ne reste plus de pièces enfant on supprime le parent
         localStorage.removeItem(attribute);
-        recalculQuantite(); 
+        recalculQuantite(); // recalcul de la quantité une fois que le/les élément(s) sont supprimés.
+        console.log(recalculQuantite)
     };
+    console.log(actionSuppr)
 
     for (var i = 0; i < pieces.length; i++) {
-        pieces[i].addEventListener('click', maFonction, false); // **** OUBLIES PAS DEXPLIQUER ****
+        pieces[i].addEventListener('click', actionSuppr, false); // 
     }
 }
+
+async function recalculQuantite() {
+
+    var quantite = 0;
+    var argent = 0;
+    for (var i = 0; i < localStorage.length; i++) {
+        let key = localStorage.key(i);
+        let getOut = localStorage.getItem(key); 
+            let getoutJson = JSON.parse(getOut);
+            let nombre = "http://localhost:3000/api/products/" + getoutJson._quantity;
+            let itemLink = "http://localhost:3000/api/products/" + getoutJson.itemId; 
+            const article = await getArticle(itemLink);
+            console.log(article)
+            quantite += nombre; // ajoute progressivement la quantité correspondante à chaque article
+            argent += article.price * nombre; //ajoute progressivement le prix chaque article MULTIPLIE par sa quantité
+    }
+    var baliseQuant = document.getElementById('totalQuantity').innerHTML;
+    if(baliseQuant += "") {
+        document.getElementById('totalQuantity').innerHTML = "";
+    }
+    var balisePrix = document.getElementById('totalPrice').innerHTML;
+    if(balisePrix += "") {
+        document.getElementById('totalPrice').innerHTML = "";
+    }
+    document.getElementById('totalQuantity').innerHTML += '${quantite}'
+    
+    document.getElementById('totalPrice').innerHTML += '${argent}'
+
+}
+
+
+
 
