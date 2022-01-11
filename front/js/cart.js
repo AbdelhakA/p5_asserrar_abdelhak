@@ -9,11 +9,10 @@
     if(taillePanier != 0) {
         for (var i = 0; i < localStorage.length; i++) { // Le panier s'affiche jusqu'au dernier produit
             let key = localStorage.key(i); // on génère une clé du LS pour i (produit)
-            // console.log(key)
             let getOut = localStorage.getItem(key); // key nous permet de récupérer le produit
             let getoutJson = JSON.parse(getOut); // conversion du produit au format JS
             let itemLink = "http://localhost:3000/api/products/" + getoutJson.itemId; // crée un lien du produit
-            console.log(getoutJson.itemId)
+            // console.log(getoutJson.itemId)
             const article = await getArticle(itemLink);
             let finalProduct = {
                 itemId: article._id,
@@ -29,9 +28,9 @@
             afficherArticle(afficheTableau[i], getoutJson._color, key) //on affiche notre article avec les valeurs nécessaire.
             if (i == localStorage.length - 1) { // une fois que tout est affiché, on appelle les fonctions que l'on utilisera
                 suppression() //fonction utilisée qd l'utilisateur retire un article du panier
-                // valueQuantity()  //calcul le nombre total d'articles et le prix total
-                // changement() //observe si il y'a un changement de quantité et modifie les valeurs en conséquence.
-                // ContactCheck() //fonction qui verifie que avant de faire la commande le formulaire est bien remplis.
+                recalculQuantite()  //calcul le nombre total d'articles et le prix total
+                changement() //observe si il y'a un changement de quantité et modifie les valeurs en conséquence.
+                ContactCheck() //fonction qui verifie que avant de faire la commande le formulaire est bien remplis.
         }
     } 
  } 
@@ -41,14 +40,16 @@
  }
 }
 
+
+
 function getArticle(itemLink) { //fonction qui récupère l'article avec fetch et qui le renvoie que lorsqu'il a reçu la réponse.
     return fetch(itemLink)
     .then(function(httpBodyResponse) {
-        console.log(httpBodyResponse)
+        // console.log(httpBodyResponse)
         return httpBodyResponse.json()
     })
     .then (function (articles) {
-        console.log(articles)
+        // console.log(articles)
         return articles
     })
     .catch (function(error) {
@@ -95,9 +96,9 @@ function suppression() {
         document.getElementById(parentPiece).remove(); // quand il ne reste plus de pièces enfant on supprime le parent
         localStorage.removeItem(attribute);
         recalculQuantite(); // recalcul de la quantité une fois que le/les élément(s) sont supprimés.
-        console.log(recalculQuantite)
+        
     };
-    console.log(actionSuppr)
+    
 
     for (var i = 0; i < pieces.length; i++) {
         pieces[i].addEventListener('click', actionSuppr, false); // 
@@ -112,27 +113,76 @@ async function recalculQuantite() {
         let key = localStorage.key(i);
         let getOut = localStorage.getItem(key); 
             let getoutJson = JSON.parse(getOut);
-            let nombre = "http://localhost:3000/api/products/" + getoutJson._quantity;
+            let nombre = parseInt(getoutJson._quantity);
             let itemLink = "http://localhost:3000/api/products/" + getoutJson.itemId; 
             const article = await getArticle(itemLink);
             console.log(article)
             quantite += nombre; // ajoute progressivement la quantité correspondante à chaque article
             argent += article.price * nombre; //ajoute progressivement le prix chaque article MULTIPLIE par sa quantité
-    }
+    };
     var baliseQuant = document.getElementById('totalQuantity').innerHTML;
-    if(baliseQuant += "") {
+    if(baliseQuant != "") {
         document.getElementById('totalQuantity').innerHTML = "";
     }
     var balisePrix = document.getElementById('totalPrice').innerHTML;
-    if(balisePrix += "") {
+    if(balisePrix != "") {
         document.getElementById('totalPrice').innerHTML = "";
     }
-    document.getElementById('totalQuantity').innerHTML += '${quantite}'
+    document.getElementById('totalQuantity').innerHTML += ` ${quantite} `;
     
-    document.getElementById('totalPrice').innerHTML += '${argent}'
+    
+    document.getElementById('totalPrice').innerHTML += ` ${argent} `;
 
 }
 
+function changement() { // check les changement dans les quantités
+    var elements = document.getElementsByClassName('itemQuantity');
+
+    var changes = function() {
+        
+        var attribut = this.getAttribute("data-id"); // on récupère le "data-id" pour voire quel article a été modifié.
+        var concatene = '_' + attribut; // l'emplacement de stockage du nombre de produit
+        var valQuant = document.getElementById(concatene).value;
+        let getout = localStorage.getItem(attribut);
+        let getoutJson = JSON.parse(getout);
+        getoutJson._quantity = valQuant; 
+        localStorage.removeItem(attribut); //on supprime notre objet du local storage
+        let stringTab = JSON.stringify(getoutJson);
+        localStorage.setItem(attribut, stringTab);
+        recalculQuantite(); // change la quantité totale et le prix total
+        
+    }
+    
+    for (var i = 0; i < elements.length; i++) { //pour l'ensembles des éléments du tableau (get element by class renvoie un tableau)
+        elements[i].addEventListener('change', changes, false);
+    }
+    
+}
+
+function ContactCheck() { //vérifie si le formulaire est bien rempli avant de faire la requète POST vers l'api
+    const order = document.getElementById('order');
+    order.addEventListener('click', function()  {
+        console.log("test")
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const address = document.getElementById('address').value;
+        const city = document.getElementById('city').value;
+        const email = document.getElementById('email').value;
+        let store = localStorage.length
+        if (validationFirstName(firstName) === true && validationLastName(lastName) === true) {
+            if (validationAdresse(address) === true && validationCity(city) === true) {
+                if (validationMail(email) === true && store != 0) {
+                    postReservaiton(firstName, lastName, adresse, city, email); // envoie la requète post
+                }
+            }
+        }
+        if (store === 0) {
+            alert("Le panier est vide.")
+        }
+    })
 
 
 
+
+
+}

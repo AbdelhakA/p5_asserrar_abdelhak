@@ -1,4 +1,4 @@
-console.log("yo");
+
 
 (async function () {
     const items = await getItems()
