@@ -1,13 +1,13 @@
 (async function () {
-    affichePanier();
+    displayCart();
   })()
 
- async function affichePanier () {
+ async function displayCart () {
 
     let taillePanier = localStorage.length
     let afficheTableau = [];
     if(taillePanier != 0) {
-        for (var i = 0; i < localStorage.length; i++) { // Le panier s'affiche jusqu'au dernier produit
+        for (var i = 0; i < localStorage.length; i++) { // affiche tout le panier
             let key = localStorage.key(i); // on génère une clé du LS pour i (produit)
             let getOut = localStorage.getItem(key); // key nous permet de récupérer le produit
             let getoutJson = JSON.parse(getOut); // conversion du produit au format JS
@@ -159,7 +159,7 @@ function changement() { // check les changement dans les quantités
     
 }
 
-function ContactCheck() { //vérifie si le formulaire est bien rempli avant de faire la requète POST vers l'api
+function InfosContact() { //vérification infos contact
     const order = document.getElementById('order');
     order.addEventListener('click', function()  {
         console.log("test")

@@ -1,12 +1,15 @@
 
 
 (async function () {
-    const items = await getItems()
+    let queryString = window.location.search; // permet de recupérer l'id dans l'URL
+    let urlParams = new URLSearchParams(queryString); // permet de recupérer l'id dans l'URL
+    let id = urlParams.get('id'); // permet de recupérer l'id dans l'URL
+    const item = await getItems(id)
     
-    for (item of items) {
+    // for (item of items) {
        displayItem(item);
        
-    }
+    // }
    const colors = item.colors;
    
     
@@ -20,9 +23,7 @@
     addCart.addEventListener('click', function(item) { //Cette fonction ce déclenche quand l'utilisateur clique sur ajouter au panier
         var selectElem = document.getElementById('colors');
         var index = selectElem.selectedIndex;
-    let str = window.location.href;
-    let url = new URL(str); 
-    let id  = url.searchParams.get("id");
+    
         
         var quantity = document.getElementById('quantity').value;
 
@@ -41,8 +42,8 @@
 
   
   
-  function getItems() {
-    return fetch("http://localhost:3000/api/products")
+  function getItems(productId) {
+    return fetch("http://localhost:3000/api/products/" + productId)
         .then(function (httpBodyResponse) {
             return httpBodyResponse.json()
         })
