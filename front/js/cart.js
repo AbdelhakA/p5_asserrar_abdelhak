@@ -1,3 +1,4 @@
+
 (async function () {
     displayCart();
   })()
@@ -30,7 +31,7 @@
                 suppression() //fonction utilisée qd l'utilisateur retire un article du panier
                 recalculQuantite()  //calcul le nombre total d'articles et le prix total
                 changement() //observe si il y'a un changement de quantité et modifie les valeurs en conséquence.
-                ContactCheck() //fonction qui verifie que avant de faire la commande le formulaire est bien remplis.
+                //ContactCheck() //fonction qui verifie que avant de faire la commande le formulaire est bien remplis.
         }
     } 
  } 
@@ -42,20 +43,13 @@
 
 
 
-function getArticle(itemLink) { //fonction qui récupère l'article avec fetch et qui le renvoie que lorsqu'il a reçu la réponse.
-    return fetch(itemLink)
-    .then(function(httpBodyResponse) {
-        // console.log(httpBodyResponse)
-        return httpBodyResponse.json()
-    })
-    .then (function (articles) {
-        // console.log(articles)
-        return articles
-    })
-    .catch (function(error) {
-        alert(error)
-    })
-}
+function getArticle(itemLink) { //fonction qui récupère l'article et qui le renvoie que lorsqu'il a reçu la réponse.
+        return fetch(itemLink) // autrement dit on fetch cette adresse ""http://localhost:3000/api/products/" + getproductJson.itemId"
+        .then(produitResponse => produitResponse.json()) // on convertit la reponse du fetch en JSON
+        .catch (function(error) {
+            alert(error)
+        })
+    }
 
 function afficherArticle(article, color, id) {
     document.getElementById('cart__items').innerHTML += `
@@ -116,7 +110,6 @@ async function recalculQuantite() {
             let nombre = parseInt(getoutJson._quantity);
             let itemLink = "http://localhost:3000/api/products/" + getoutJson.itemId; 
             const article = await getArticle(itemLink);
-            console.log(article)
             quantite += nombre; // ajoute progressivement la quantité correspondante à chaque article
             argent += article.price * nombre; //ajoute progressivement le prix chaque article MULTIPLIE par sa quantité
     };
@@ -159,30 +152,85 @@ function changement() { // check les changement dans les quantités
     
 }
 
-function InfosContact() { //vérification infos contact
-    const order = document.getElementById('order');
-    order.addEventListener('click', function()  {
-        console.log("test")
-        const firstName = document.getElementById('firstName').value;
-        const lastName = document.getElementById('lastName').value;
-        const address = document.getElementById('address').value;
-        const city = document.getElementById('city').value;
-        const email = document.getElementById('email').value;
-        let store = localStorage.length
-        if (validationFirstName(firstName) === true && validationLastName(lastName) === true) {
-            if (validationAdresse(address) === true && validationCity(city) === true) {
-                if (validationMail(email) === true && store != 0) {
-                    postReservaiton(firstName, lastName, adresse, city, email); // envoie la requète post
-                }
-            }
+async function infosContact() {
+
+    function formulaireCtc () {
+
+        let prenom = document.getElementById('firstName').value;
+        let nom = document.getElementById('lastName').value;
+        let adresse = document.getElementById('address').value;
+        let ville = document.getElementById('city').value;
+        let mail = document.getElementById('email').value;
+        
+   
         }
-        if (store === 0) {
-            alert("Le panier est vide.")
+
+    // let formulaireCtc = {
+    //     prenom: document.getElementById('firstName').value,
+    //     nom: document.getElementById('lastName').value,
+    //     adresse: document.getElementById('address').value,
+    //     ville: document.getElementById('city').value,
+    //     mail: document.getElementById('email').value
+    // }
+
+        let btnOrder = document.getElementById('order');
+        btnOrder.addEventListener('click', formulaireCtc, true);
+        
+
+            await finishOrder();
+
+
+    }
+
+async function finishOrder (prenom, nom, adresse, ville, mail) {
+
+        let tableauArticle = [];
+        let i = 0;
+        let element;
+        let getProduct;
+        let getproductJson;
+        console.log(getproductJson)
+        while (i < localStorage.length) {
+            element = localStorage.key(i)
+            getProduct = localStorage.getItem(element)
+            getproductJson = JSON.parse(getProduct);
+            tableauArticle[i] = getproductJson.itemId; 
+            i++;  
         }
+         
+        const renseignements = {
+            firstName: prenom,
+            lastName: nom,
+            address: adresse,
+            city: ville,
+            email: mail
+        }
+   
+        const fullInfos = { // contenir les données dans un objet
+            renseignements,
+            products
+        }
+
+   
+    }
+
+    async function postApi (order) {
+    let response = await fetch("http://localhost:3000/api/products/order", {
+    method: 'POST',
+    headers: { 
+    'Content-Type': 'application/json'  
+    },
+    body: JSON.stringify(order)
     })
-
-
-
-
-
+    
+    let donnees = await response.json()
+    console.log(donnees)
+    .then(function(confirm) {
+        let finish = confirm;
+        let redirect = "./confirmation.html" + finish.orderId
+        console.log(redirect)
+        window.location.href = redirect;
+    })
+    redirect.addEventListener('click', confirm, true);
 }
+
