@@ -10,23 +10,22 @@
     if(taillePanier != 0) {
         for (var i = 0; i < localStorage.length; i++) { // affiche tout le panier
             let key = localStorage.key(i); // on génère une clé du LS pour i (produit)
-            let getOut = localStorage.getItem(key); // key nous permet de récupérer le produit
-            let getoutJson = JSON.parse(getOut); // conversion du produit au format JS
-            let itemLink = "http://localhost:3000/api/products/" + getoutJson.itemId; // crée un lien du produit
-            // console.log(getoutJson.itemId)
+            let getProduct = localStorage.getItem(key); // key nous permet de récupérer le produit
+            let getproductJson = JSON.parse(getProduct); // conversion du produit au format JS
+            let itemLink = "http://localhost:3000/api/products/" + getproductJson.itemId; // crée un lien du produit
             const article = await getArticle(itemLink);
             let finalProduct = {
                 itemId: article._id,
                 _imageUrl: article.imageUrl,
                 name: article.name,
                 _price: parseInt(article.price),
-                _quantity: parseInt(getoutJson._quantity)
+                _quantity: parseInt(getproductJson._quantity)
             }
             // console.log(finalProduct)
-            let id = article.itemId;
+            // let id = article.itemId;
             // console.log(id)
             afficheTableau[i] = finalProduct; // le produit est stocké dans un tableau
-            afficherArticle(afficheTableau[i], getoutJson._color, key) //on affiche notre article avec les valeurs nécessaire.
+            afficherArticle(afficheTableau[i], getproductJson._color, key) //on affiche notre article avec les valeurs nécessaire.
             if (i == localStorage.length - 1) { // une fois que tout est affiché, on appelle les fonctions que l'on utilisera
                 suppression() //fonction utilisée qd l'utilisateur retire un article du panier
                 recalculQuantite()  //calcul le nombre total d'articles et le prix total
@@ -80,7 +79,7 @@ function suppression() {
 
     let pieces = document.getElementsByClassName("deleteItem");
 
-    let actionSuppr = function() {
+    function actionSuppr () {
         var attribute = this.getAttribute("id");
         var parentPiece = ":" + attribute;
         var piece = document.getElementById(parentPiece);
@@ -105,10 +104,10 @@ async function recalculQuantite() {
     var argent = 0;
     for (var i = 0; i < localStorage.length; i++) {
         let key = localStorage.key(i);
-        let getOut = localStorage.getItem(key); 
-            let getoutJson = JSON.parse(getOut);
-            let nombre = parseInt(getoutJson._quantity);
-            let itemLink = "http://localhost:3000/api/products/" + getoutJson.itemId; 
+        let getProduct = localStorage.getItem(key); 
+            let getproductJson = JSON.parse(getProduct);
+            let nombre = parseInt(getproductJson._quantity);
+            let itemLink = "http://localhost:3000/api/products/" + getproductJson.itemId; 
             const article = await getArticle(itemLink);
             quantite += nombre; // ajoute progressivement la quantité correspondante à chaque article
             argent += article.price * nombre; //ajoute progressivement le prix chaque article MULTIPLIE par sa quantité
@@ -136,11 +135,11 @@ function changement() { // check les changement dans les quantités
         var attribut = this.getAttribute("data-id"); // on récupère le "data-id" pour voire quel article a été modifié.
         var concatene = '_' + attribut; // l'emplacement de stockage du nombre de produit
         var valQuant = document.getElementById(concatene).value;
-        let getout = localStorage.getItem(attribut);
-        let getoutJson = JSON.parse(getout);
-        getoutJson._quantity = valQuant; 
+        let getProduct = localStorage.getItem(attribut);
+        let getproductJson = JSON.parse(getProduct);
+        getproductJson._quantity = valQuant; 
         localStorage.removeItem(attribut); //on supprime notre objet du local storage
-        let stringTab = JSON.stringify(getoutJson);
+        let stringTab = JSON.stringify(getproductJson);
         localStorage.setItem(attribut, stringTab);
         recalculQuantite(); // change la quantité totale et le prix total
         
@@ -154,24 +153,26 @@ function changement() { // check les changement dans les quantités
 
 async function infosContact() {
 
-    function formulaireCtc () {
-
         let prenom = document.getElementById('firstName').value;
         let nom = document.getElementById('lastName').value;
         let adresse = document.getElementById('address').value;
         let ville = document.getElementById('city').value;
         let mail = document.getElementById('email').value;
         
-   
+
+    function formulaireCtc () {
+
+        let formulaire = {
+            prenom: document.getElementById('firstName').value,
+            nom: document.getElementById('lastName').value,
+            adresse: document.getElementById('address').value,
+            ville: document.getElementById('city').value,
+            mail: document.getElementById('email').value
         }
 
-    // let formulaireCtc = {
-    //     prenom: document.getElementById('firstName').value,
-    //     nom: document.getElementById('lastName').value,
-    //     adresse: document.getElementById('address').value,
-    //     ville: document.getElementById('city').value,
-    //     mail: document.getElementById('email').value
-    // }
+        }
+
+    
 
         let btnOrder = document.getElementById('order');
         btnOrder.addEventListener('click', formulaireCtc, true);
@@ -211,6 +212,7 @@ async function finishOrder (prenom, nom, adresse, ville, mail) {
             products
         }
 
+        postApi(fullInfos);
    
     }
 
