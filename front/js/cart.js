@@ -1,9 +1,10 @@
 
+
 (async function () {
     displayCart();
   })()
 
- async function displayCart () {
+  async function displayCart () {
 
     let taillePanier = localStorage.length
     let afficheTableau = [];
@@ -26,11 +27,12 @@
             // console.log(id)
             afficheTableau[i] = finalProduct; // le produit est stocké dans un tableau
             afficherArticle(afficheTableau[i], getproductJson._color, key) //on affiche notre article avec les valeurs nécessaire.
-            if (i == localStorage.length - 1) { // une fois que tout est affiché, on appelle les fonctions que l'on utilisera
+            if (i === localStorage.length - 1) { // une fois que tout est affiché, on appelle les fonctions que l'on utilisera
                 suppression() //fonction utilisée qd l'utilisateur retire un article du panier
                 recalculQuantite()  //calcul le nombre total d'articles et le prix total
                 changement() //observe si il y'a un changement de quantité et modifie les valeurs en conséquence.
-                //ContactCheck() //fonction qui verifie que avant de faire la commande le formulaire est bien remplis.
+                infosContact() //fonction qui verifie que avant de faire la commande le formulaire est bien remplis.
+                // postApi()
         }
     } 
  } 
@@ -45,9 +47,9 @@
 function getArticle(itemLink) { //fonction qui récupère l'article et qui le renvoie que lorsqu'il a reçu la réponse.
         return fetch(itemLink) // autrement dit on fetch cette adresse ""http://localhost:3000/api/products/" + getproductJson.itemId"
         .then(produitResponse => produitResponse.json()) // on convertit la reponse du fetch en JSON
-        .catch (function(error) {
-            alert(error)
-        })
+        // .catch (function(error) {
+        //     alert(error)
+        // })
     }
 
 function afficherArticle(article, color, id) {
@@ -108,9 +110,9 @@ async function recalculQuantite() {
             let getproductJson = JSON.parse(getProduct);
             let nombre = parseInt(getproductJson._quantity);
             let itemLink = "http://localhost:3000/api/products/" + getproductJson.itemId; 
-            const article = await getArticle(itemLink);
+            const article_ = await getArticle(itemLink);
             quantite += nombre; // ajoute progressivement la quantité correspondante à chaque article
-            argent += article.price * nombre; //ajoute progressivement le prix chaque article MULTIPLIE par sa quantité
+            argent += article_.price * nombre; //ajoute progressivement le prix chaque article MULTIPLIE par sa quantité
     };
     var baliseQuant = document.getElementById('totalQuantity').innerHTML;
     if(baliseQuant != "") {
@@ -151,46 +153,119 @@ function changement() { // check les changement dans les quantités
     
 }
 
-async function infosContact() {
+function infosContact() {
 
-        let prenom = document.getElementById('firstName').value;
-        let nom = document.getElementById('lastName').value;
+    const btnOrder = document.getElementById('order');
+    btnOrder.addEventListener('click', function()  {
+
+        let firstName = document.getElementById('firstName').value;
+        let lastName = document.getElementById('lastName').value;
         let adresse = document.getElementById('address').value;
-        let ville = document.getElementById('city').value;
-        let mail = document.getElementById('email').value;
-        
+        let city = document.getElementById('city').value;
+        let email = document.getElementById('email').value;
+        let store = localStorage.length
 
-    function formulaireCtc () {
-
-        let formulaire = {
-            prenom: document.getElementById('firstName').value,
-            nom: document.getElementById('lastName').value,
-            adresse: document.getElementById('address').value,
-            ville: document.getElementById('city').value,
-            mail: document.getElementById('email').value
+        if (checkFirstName(firstName) == true && checkLastName(lastName) == true && checkAddress(adresse) == true && checkCity(city) && checkMail(email) == true && store != 0) {
+           
+                    finishOrder(firstName, lastName, adresse, city, email); // envoie la requète post
+                
         }
-
+        if (store === 0) {
+            alert("Le panier est vide")
         }
+    });
 
-    
+        // let contact = {
+        //     prenom: document.getElementById('firstName').value,
+        //     nom: document.getElementById('lastName').value,
+        //     adresse: document.getElementById('address').value,
+        //     ville: document.getElementById('city').value,
+        //     mail: document.getElementById('email').value
+        // }
 
-        let btnOrder = document.getElementById('order');
-        btnOrder.addEventListener('click', formulaireCtc, true);
-        
+        // let btnOrder = document.getElementById('order');
+        // btnOrder.addEventListener('click', contact, true)
 
-            await finishOrder();
-
+        //     finishOrder(contact)
 
     }
 
-async function finishOrder (prenom, nom, adresse, ville, mail) {
+    function checkLastName (value) {
+        var check = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u ;
+    if (check.exec(value) == null) {
+        alert("Le format du nom est incorrect");
+        return false;
+    }
+
+    else {
+        return true;
+    }
+    }
+
+    function checkFirstName (value) {
+        var check = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u ;
+    if (check.exec(value) == null) {
+        alert("Le format du prénom est incorrect");
+        return false;
+    }
+    
+    else {
+        return true;
+    }
+    }
+
+    function checkAddress (value) {
+        var check = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u ;
+    if (check.exec(value) == null) {
+        alert("Le format de l'adresse est incorrect");
+        return false;
+    }
+    
+    else {
+        return true;
+    }
+    }
+
+    function checkCity (value) {
+        var check = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u ;
+    if (check.exec(value) == null) {
+        alert("Le format de la ville est incorrect");
+        return false;
+    }
+    
+    else {
+        return true;
+    }
+    }
+
+    function checkMail(value) { //vérifie à l'aide de regex que l'adresse mail est composé d'une première partie avec des lettres, des nombres, et quelques signes spéciaux.
+        // suivie du signe @ puis de nouveau cette sélection suivie d'un . enfin il ne peux y'avoir que deux caractères en lettres après le .
+    var verif = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]{2,}[.][a-zA-Z]{2,3}$/ ;
+    if (verif.exec(value) == null) {
+    alert("Le format de l'adresse mail est incorrect");
+        return false;
+    }
+    else {
+        return true;
+    }	
+    }
+
+
+function finishOrder (nom, prenom, adresse, ville, mail) {
+
+        let contact = {
+            lastName: nom,
+            firstName: prenom,
+            adresse: adresse,
+            city: ville,
+            email: mail,
+        }
 
         let tableauArticle = [];
         let i = 0;
         let element;
         let getProduct;
         let getproductJson;
-        console.log(getproductJson)
         while (i < localStorage.length) {
             element = localStorage.key(i)
             getProduct = localStorage.getItem(element)
@@ -199,40 +274,51 @@ async function finishOrder (prenom, nom, adresse, ville, mail) {
             i++;  
         }
          
-        const renseignements = {
-            firstName: prenom,
-            lastName: nom,
-            address: adresse,
-            city: ville,
-            email: mail
-        }
    
         const fullInfos = { // contenir les données dans un objet
-            renseignements,
-            products
+            contact,
+            tableauArticle
         }
 
         postApi(fullInfos);
    
     }
 
-    async function postApi (order) {
-    let response = await fetch("http://localhost:3000/api/products/order", {
-    method: 'POST',
-    headers: { 
-    'Content-Type': 'application/json'  
-    },
-    body: JSON.stringify(order)
-    })
+        async function postApi (fullInfos) {
+
+        fetch(("http://localhost:3000/api/products/order"), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
     
-    let donnees = await response.json()
-    console.log(donnees)
-    .then(function(confirm) {
-        let finish = confirm;
-        let redirect = "./confirmation.html" + finish.orderId
-        console.log(redirect)
-        window.location.href = redirect;
-    })
-    redirect.addEventListener('click', confirm, true);
-}
+        body: JSON.stringify(fullInfos)
+      })
+      .then((res) => res.json())
+      .then((order) => {
+        
+        localStorage.clear();
+        
+        window.location = "../html/confirmation.html?orderId=" + order.orderId
+      })
+      .catch(function(error) {
+        console.log('Il y a eu un problème avec l\'opération fetch: ' + error.message);
+      });
+
+        }
+
+        
+
+    
+   
+    
+
+
+        
+
+      
+
+    
+    
+
 

@@ -131,6 +131,7 @@ function addPanier(index, colors, id, quantity) {  // C'est une fonction qui vé
       localStorage.setItem(key, tableauString);
       console.log(localStorage);
   }
+  
   else {
       if (localStorage.getItem(key)) {
           let sortir = localStorage.getItem(key);
