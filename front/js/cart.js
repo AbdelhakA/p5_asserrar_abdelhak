@@ -284,7 +284,7 @@ function finishOrder (nom, prenom, adresse, ville, mail) {
    
     }
 
-        async function postApi (fullInfos) {
+        function postApi (fullInfos) {
 
         fetch(("http://localhost:3000/api/products/order"), {
         method: "POST",
@@ -294,7 +294,7 @@ function finishOrder (nom, prenom, adresse, ville, mail) {
     
         body: JSON.stringify(fullInfos)
       })
-      .then((res) => res.json())
+      .then((response) => response.json())
       .then((order) => {
         
         localStorage.clear();
