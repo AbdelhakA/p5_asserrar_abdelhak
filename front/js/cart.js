@@ -31,8 +31,11 @@
                 suppression() //fonction utilisée qd l'utilisateur retire un article du panier
                 recalculQuantite()  //calcul le nombre total d'articles et le prix total
                 changement() //observe si il y'a un changement de quantité et modifie les valeurs en conséquence.
-                infosContact() //fonction qui verifie que avant de faire la commande le formulaire est bien remplis.
-                // postApi()
+                const btnOrder = document.getElementById('order');
+                btnOrder.addEventListener('click', function()  {
+                    
+                    infosContact()
+    });
         }
     } 
  } 
@@ -154,26 +157,22 @@ function changement() { // check les changement dans les quantités
 }
 
 function infosContact() {
-
-    const btnOrder = document.getElementById('order');
-    btnOrder.addEventListener('click', function()  {
-
-        let firstName = document.getElementById('firstName').value;
+    let firstName = document.getElementById('firstName').value;
         let lastName = document.getElementById('lastName').value;
         let adresse = document.getElementById('address').value;
         let city = document.getElementById('city').value;
         let email = document.getElementById('email').value;
         let store = localStorage.length
-
-        if (checkFirstName(firstName) == true && checkLastName(lastName) == true && checkAddress(adresse) == true && checkCity(city) && checkMail(email) == true && store != 0) {
-           
+        console.log(store, localStorage)
+        if (checkFirstName(firstName) == true && checkLastName(lastName) == true && checkAddress(adresse) == true && checkCity(city) && checkMail(email) == true) {
+                console.log("test")
                     finishOrder(firstName, lastName, adresse, city, email); // envoie la requète post
                 
         }
-        if (store === 0) {
+        else {
             alert("Le panier est vide")
         }
-    });
+    
 
         // let contact = {
         //     prenom: document.getElementById('firstName').value,
@@ -256,12 +255,12 @@ function finishOrder (nom, prenom, adresse, ville, mail) {
         let contact = {
             lastName: nom,
             firstName: prenom,
-            adresse: adresse,
+            address: adresse,
             city: ville,
             email: mail,
         }
 
-        let tableauArticle = [];
+        let products = [];
         let i = 0;
         let element;
         let getProduct;
@@ -270,21 +269,23 @@ function finishOrder (nom, prenom, adresse, ville, mail) {
             element = localStorage.key(i)
             getProduct = localStorage.getItem(element)
             getproductJson = JSON.parse(getProduct);
-            tableauArticle[i] = getproductJson.itemId; 
+            products.push(getproductJson.itemId);  
             i++;  
         }
          
    
         const fullInfos = { // contenir les données dans un objet
             contact,
-            tableauArticle
+            products
         }
-
+        
         postApi(fullInfos);
    
     }
 
         function postApi (fullInfos) {
+
+            
 
         fetch(("http://localhost:3000/api/products/order"), {
         method: "POST",
@@ -296,13 +297,16 @@ function finishOrder (nom, prenom, adresse, ville, mail) {
       })
       .then((response) => response.json())
       .then((order) => {
+
+        console.log(order)
+        
         
         localStorage.clear();
         
         window.location = "../html/confirmation.html?orderId=" + order.orderId
       })
       .catch(function(error) {
-        console.log('Il y a eu un problème avec l\'opération fetch: ' + error.message);
+        
       });
 
         }
