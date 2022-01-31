@@ -1,67 +1,57 @@
-
-
 (async function () {
-    let queryString = window.location.search; // permet de recupérer l'id dans l'URL
-    let urlParams = new URLSearchParams(queryString); // permet de recupérer l'id dans l'URL
-    let id = urlParams.get('id'); // permet de recupérer l'id dans l'URL
-    const item = await getItems(id)
-    
-    // for (item of items) {
-       displayItem(item);
-       
-    // }
-   const colors = item.colors;
-   
-    
-   for (color of colors) {
+  let queryString = window.location.search; // permet de recupérer l'id dans l'URL
+  let urlParams = new URLSearchParams(queryString); // permet de recupérer l'id dans l'URL
+  let id = urlParams.get('id'); // permet de recupérer l'id dans l'URL
+  const item = await getItems(id) // fonction qui ira chercher les infos relatives à l'item via fetch
+
+ 
+  displayItem(item);
+
+
+  const colors = item.colors;
+
+
+  for (color of colors) {
     displayColor(color);
-   }
-
-   //test test
-
-   const addCart = document.getElementById('addToCart');
-    addCart.addEventListener('click', function(item) { //Cette fonction ce déclenche quand l'utilisateur clique sur ajouter au panier
-        var selectElem = document.getElementById('colors');
-        var index = selectElem.selectedIndex;
-    
-        
-        var quantity = document.getElementById('quantity').value;
-
-        if(index != 0 && quantity > 0) { //on vérifie que la couleur a été choisie et que la quantitée n'est pas à 0
-            console.log('produit ajouté au panier')
-            addPanier(index, colors, id, quantity);
-            // verifOrdre();
-        }
-        else {
-            console.log('nop')
-            alert('il faut choisir une couleur et avoir au moins un article pour commander !')
-            return (1);
-        }
-    });
-  })()
-
-  
-  
-  function getItems(productId) {
-    return fetch("http://localhost:3000/api/products/" + productId)
-        .then(function (httpBodyResponse) {
-            return httpBodyResponse.json()
-        })
-        .then(function (items) {
-            return items;
-        })
-        .catch(function (error) {
-            alert(error)
-        })
   }
+
   
-  function displayItem(item) { 
-    let productId = item._id; 
-    let str = window.location.href;
-    let url = new URL(str); 
-    let id  = url.searchParams.get("id"); 
+
+  const addtoCart = document.getElementById('addToCart');
+  addtoCart.addEventListener('click', function () { //  fonction qui s'exécute lorsque l'utilisateur clique sur le bouton
     
+    var pickColor = document.getElementById('colors');
+    var choice = pickColor.selectedChoice;
+    var quantity = document.getElementById('quantity').value;
+
+    if (choice != 0 && quantity > 0) { //on vérifie que la couleur a été choisie et que la quantité > 0
+      
+      ajoutPanier(choice, colors, id, quantity);
+      
+    } else {
+      
+      alert('Veuillez sélectionner au moins un article et une couleur pour commander')
+      
+    }
+  });
+})()
+
+
+
+function getItems(id) { 
+  return fetch("http://localhost:3000/api/products/" + id)
     
+  .then(produitResponse => produitResponse.json())
+    
+}
+
+function displayItem(item) {
+  let productId = item._id;
+  let str = window.location.href;
+  let url = new URL(str);
+  let id = url.searchParams.get("id");
+
+
   if (productId === id) {
 
 
@@ -102,53 +92,53 @@
 
               </div>
               </article>`
-      
+
   }
 
-  
-}    
 
-function displayColor(color) {  
+}
+
+function displayColor(color) {
   document.getElementById("colors").innerHTML += `
       <option value="${color}">${color}</option>
   `
 }
 
-function addPanier(index, colors, id, quantity) {  // C'est une fonction qui vérifie qu'il n'existe pas déja dans notre
-  var colorValide = colors[index - 1]
-  console.log(id)            // storage un élément avec le même id et la même couleur. Si oui il
-  var size = localStorage.length                 // rassemble les deux élément en un élément en additionnant les quantités.
-  var key = id + colorValide
-  let commande = {
-      itemId: id,
-      _color: colorValide,
-      _quantity: quantity
-  };
-  console.log(commande)
-  
-  if (size === 0) {
-      let tableauString = JSON.stringify(commande);
-      localStorage.setItem(key, tableauString);
-      console.log(localStorage);
+/* fonction qui vérifie qu'il n'y a pas d'éléments identiques 
+et les rassemble si c'est le cas */
+function ajoutPanier(choice, colors, id, quantity) { 
+
+  var validColor = colors[choice - 1]
+  var size = localStorage.length 
+  var key = id + validColor
+  let order = {
+    itemId: id,
+    _color: validColor,
+    _quantity: quantity
   }
-  
-  else {
-      if (localStorage.getItem(key)) {
-          let sortir = localStorage.getItem(key);
-          let sortirJson = JSON.parse(sortir);
-          let quantity1 = parseInt(commande._quantity);
-          let quantity2 = parseInt(sortirJson._quantity);
-          commande._quantity = quantity1 + quantity2;
-          localStorage.removeItem(key);
-          let tableauString = JSON.stringify(commande);
-          localStorage.setItem(key, tableauString);
-          console.log(localStorage);
-      }
-      else {
-          let tableauString = JSON.stringify(commande);
-          localStorage.setItem(key, tableauString);
-          console.log(localStorage);
-      }
+
+  if (size === 0) {
+    let tableauString = JSON.stringify(order);
+    localStorage.setItem(key, tableauString);
+    
+  } else {
+
+    if (localStorage.getItem(key)) {
+      let getProduct = localStorage.getItem(key);
+      let getproductJson = JSON.parse(getProduct);
+      let quantiteA = parseInt(order._quantity);
+      let quantiteB = parseInt(getproductJson._quantity);
+      order._quantity = quantiteA + quantiteB;
+      localStorage.removeItem(key);
+      let orderString = JSON.stringify(order);
+      localStorage.setItem(key, orderString);
+      
+    } 
+    
+    else {
+      let orderString = JSON.stringify(order);
+      localStorage.setItem(key, orderString);
+      
+    }
   }
 }
-
