@@ -6,25 +6,28 @@
     }
 
   })()
-
-  // Récupère l'API
   
-  function getArticles() {
+  function getArticles() {   // on récupère le contenur de l'API avec fetch
     return fetch("http://localhost:3000/api/products")
-        .then(function (httpBodyResponse) {
-            return httpBodyResponse.json()
-        })
-        .then(function (articles) {
-            return articles
-        })
-        .catch(function (error) {
-            alert(error)
-        })
+
+    .then(httpBodyResponse => httpBodyResponse.json()) // envoie en réponse le contenu de l'API
+
+        // .then(function (httpBodyResponse) {
+        //     return httpBodyResponse.json()
+        // })
+        // .then(function (articles) {
+        //     return articles
+        // })
+        // .catch(function (error) {
+        //     alert(error)
+        // })
+
+        
   }
 
-  // Afficher ce que j'ai recup
   
-  function displayArticle(article) {
+  
+  function displayArticle(article) { // Afficher les produits récupérés de l'API avec innerHTML
   
     document.getElementById("items").innerHTML += `
         <a href="./product.html?id=${article._id}">
