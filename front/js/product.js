@@ -110,7 +110,6 @@ et les rassemble si c'est le cas */
 function ajoutPanier(index, colors, id, quantity) {
 
   var validColor = colors[index - 1] // ne sélectionne qu'une seule couleur parmi le choix
-  console.log(id)
   var tailleProduit = localStorage.length
   var key = id + validColor
   let order = {
@@ -118,7 +117,6 @@ function ajoutPanier(index, colors, id, quantity) {
     _color: validColor,
     _quantity: quantity
   };
-  console.log(order)
 
   if (tailleProduit === 0) {
     let orderString = JSON.stringify(order);
