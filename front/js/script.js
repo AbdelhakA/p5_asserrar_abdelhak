@@ -7,7 +7,7 @@
 
 })()
 
-function getArticles() { // on récupère le contenur de l'API avec fetch
+function getArticles() { // on récupère le contenu de l'API avec fetch
     return fetch("http://localhost:3000/api/products")
 
         .then(function (httpBodyResponse) {
@@ -19,7 +19,6 @@ function getArticles() { // on récupère le contenur de l'API avec fetch
         .catch(function (error) {
             alert(error)
         })
-
 
 }
 

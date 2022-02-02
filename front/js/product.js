@@ -2,7 +2,7 @@
   let queryString = window.location.search; // permet de recupérer l'id dans l'URL
   let urlParams = new URLSearchParams(queryString); // permet de recupérer l'id dans l'URL
   let id = urlParams.get('id'); // permet de recupérer l'id dans l'URL
-  const item = await getItems(id)
+  const item = await getItems(id) // fonction qui récup le produit dans l'API
 
 
   displayItem(item);
@@ -20,16 +20,17 @@
   addCart.addEventListener('click', function () { // fonction qui s'exécute lorsque l'utilisateur clique sur le bouton
 
     var pickColor = document.getElementById('colors');
-    var index = pickColor.selectedIndex;
+    var index = pickColor.selectedIndex; // couleur sélectionnée
     var quantity = document.getElementById('quantity').value;
 
-    if (index != 0 && quantity > 0) { //on vérifie que la couleur a été choisie et que la quantité > 0
+    if (index != 0 && quantity > 0) { 
 
       ajoutPanier(index, colors, id, quantity);
 
     } else {
-      console.log('nop')
+      
       alert('Veuillez sélectionner au moins un article et une couleur pour commander')
+
     }
   });
 })()
@@ -39,13 +40,11 @@
 function getItems(productId) {
   return fetch("http://localhost:3000/api/products/" + productId)
 
-
-
     .then(function (httpBodyResponse) {
       return httpBodyResponse.json()
     })
-    .then(function (items) {
-      return items;
+    .then(function (item) {
+      return item;
     })
     .catch(function (error) {
       alert(error)
@@ -97,7 +96,6 @@ function displayItem(item) {
 
   }
 
-
 }
 
 function displayColor(color) { // fonction précédemment appelée et qui affiche les couleurs relatives au modèle
@@ -111,7 +109,7 @@ et les rassemble si c'est le cas */
 
 function ajoutPanier(index, colors, id, quantity) {
 
-  var validColor = colors[index - 1]
+  var validColor = colors[index - 1] // ne sélectionne qu'une seule couleur parmi le choix
   console.log(id)
   var tailleProduit = localStorage.length
   var key = id + validColor

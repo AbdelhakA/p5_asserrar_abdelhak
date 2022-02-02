@@ -163,7 +163,7 @@ function infosContact() {
     let store = localStorage.length
     console.log(store, localStorage)
     if (checkFirstName(firstName) == true && checkLastName(lastName) == true && checkAddress(adresse) == true && checkCity(city) && checkMail(email) == true) {
-        finishOrder(firstName, lastName, adresse, city, email); // envoie la requète post
+        finishOrder(firstName, lastName, adresse, city, email); // envoie la requête post
 
     } else {
         alert("Le panier est vide")
@@ -278,7 +278,7 @@ function postApi(fullInfos) {
             window.location = "../html/confirmation.html?orderId=" + order.orderId
         })
         .catch(function (error) {
-
+            alert(error)
         });
 
 }
