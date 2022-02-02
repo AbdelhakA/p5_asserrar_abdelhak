@@ -3,33 +3,33 @@
   let urlParams = new URLSearchParams(queryString); // permet de recupérer l'id dans l'URL
   let id = urlParams.get('id'); // permet de recupérer l'id dans l'URL
   const item = await getItems(id)
-  
-
-     displayItem(item);
-     
-
- const colors = item.colors;
- 
-  
- for (color of colors) {
-  displayColor(color);
- }
 
 
- const addCart = document.getElementById('addToCart'); // const associé au bouton 'Ajouter au panier'
-  addCart.addEventListener('click', function() { // fonction qui s'exécute lorsque l'utilisateur clique sur le bouton
+  displayItem(item);
+
+
+  const colors = item.colors;
+
+
+  for (color of colors) {
+    displayColor(color);
+  }
+
+
+  const addCart = document.getElementById('addToCart'); // const associé au bouton 'Ajouter au panier'
+  addCart.addEventListener('click', function () { // fonction qui s'exécute lorsque l'utilisateur clique sur le bouton
 
     var pickColor = document.getElementById('colors');
     var index = pickColor.selectedIndex;
     var quantity = document.getElementById('quantity').value;
 
-    if(index != 0 && quantity > 0) { //on vérifie que la couleur a été choisie et que la quantité > 0
-        
-        ajoutPanier(index, colors, id, quantity);
-        
+    if (index != 0 && quantity > 0) { //on vérifie que la couleur a été choisie et que la quantité > 0
+
+      ajoutPanier(index, colors, id, quantity);
+
     } else {
-        console.log('nop')
-        alert('Veuillez sélectionner au moins un article et une couleur pour commander')
+      console.log('nop')
+      alert('Veuillez sélectionner au moins un article et une couleur pour commander')
     }
   });
 })()
@@ -39,30 +39,30 @@
 function getItems(productId) {
   return fetch("http://localhost:3000/api/products/" + productId)
 
-  .then(produitResponse => produitResponse.json())
 
-      // .then(function (httpBodyResponse) {
-      //     return httpBodyResponse.json()
-      // })
-      // .then(function (items) {
-      //     return items;
-      // })
-      // .catch(function (error) {
-      //     alert(error)
-      // })
+
+    .then(function (httpBodyResponse) {
+      return httpBodyResponse.json()
+    })
+    .then(function (items) {
+      return items;
+    })
+    .catch(function (error) {
+      alert(error)
+    })
 }
 
-function displayItem(item) { 
-  let productId = item._id; 
+function displayItem(item) {
+  let productId = item._id;
   let str = window.location.href;
-  let url = new URL(str); 
-  let id  = url.searchParams.get("id"); 
-  
-  
-if (productId === id) {
+  let url = new URL(str);
+  let id = url.searchParams.get("id");
 
 
-  document.getElementById("productItem").innerHTML += `
+  if (productId === id) {
+
+
+    document.getElementById("productItem").innerHTML += `
   <article>
   <div class="item__img" >
             <img id="item_pic" src="${item.imageUrl}" alt="">
@@ -94,14 +94,14 @@ if (productId === id) {
       </div>
             </div>
             </article>`
-    
+
+  }
+
+
 }
 
-
-}    
-
-function displayColor(color) {  // fonction précédemment appelée et qui affiche les couleurs relatives au modèle
-document.getElementById("colors").innerHTML += `
+function displayColor(color) { // fonction précédemment appelée et qui affiche les couleurs relatives au modèle
+  document.getElementById("colors").innerHTML += `
     <option value="${color}">${color}</option>
 `
 }
@@ -109,40 +109,38 @@ document.getElementById("colors").innerHTML += `
 /* fonction qui vérifie qu'il n'y a pas d'éléments identiques 
 et les rassemble si c'est le cas */
 
-function ajoutPanier(index, colors, id, quantity) {  
+function ajoutPanier(index, colors, id, quantity) {
 
-var validColor = colors[index - 1]
-console.log(id)            
-var tailleProduit = localStorage.length                
-var key = id + validColor
-let order = {
+  var validColor = colors[index - 1]
+  console.log(id)
+  var tailleProduit = localStorage.length
+  var key = id + validColor
+  let order = {
     itemId: id,
     _color: validColor,
     _quantity: quantity
-};
-console.log(order)
+  };
+  console.log(order)
 
-if (tailleProduit === 0) {
+  if (tailleProduit === 0) {
     let orderString = JSON.stringify(order);
     localStorage.setItem(key, orderString);
-    
-}
-else {
+
+  } else {
     if (localStorage.getItem(key)) {
-        let getProduct = localStorage.getItem(key);
-        let getproductJson = JSON.parse(getProduct);
-        let quantityA = parseInt(order._quantity);
-        let quantityB = parseInt(getproductJson._quantity);
-        order._quantity = quantityA + quantityB;
-        localStorage.removeItem(key);
-        let orderString = JSON.stringify(order);
-        localStorage.setItem(key, orderString);
-        
+      let getProduct = localStorage.getItem(key);
+      let getproductJson = JSON.parse(getProduct);
+      let quantityA = parseInt(order._quantity);
+      let quantityB = parseInt(getproductJson._quantity);
+      order._quantity = quantityA + quantityB;
+      localStorage.removeItem(key);
+      let orderString = JSON.stringify(order);
+      localStorage.setItem(key, orderString);
+
+    } else {
+      let orderString = JSON.stringify(order);
+      localStorage.setItem(key, orderString);
+
     }
-    else {
-        let orderString = JSON.stringify(order);
-        localStorage.setItem(key, orderString);
-        
-    }
-}
+  }
 }

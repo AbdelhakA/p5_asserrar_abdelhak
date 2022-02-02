@@ -13,22 +13,22 @@ async function displayCart() {
             let getproductJson = JSON.parse(getProduct); // conversion du produit au format JS
             let itemLink = "http://localhost:3000/api/products/" + getproductJson.itemId; // crée un lien du produit
             const article = await getArticle(itemLink);
-            let finalProduct = {
+            let finalProduct = { // objet contenant toutes les infos du produit à afficher
                 itemId: article._id,
                 _imageUrl: article.imageUrl,
                 name: article.name,
-                _price: parseInt(article.price),
-                _quantity: parseInt(getproductJson._quantity)
+                _price: parseInt(article.price), // parseInt transforme en entier le prix
+                _quantity: parseInt(getproductJson._quantity) // parseInt transforme en entier la quantité
             }
-            
+
             afficheTableau[i] = finalProduct; // le produit est stocké dans un tableau
-            afficherArticle(afficheTableau[i], getproductJson._color, key) //on affiche notre article avec les valeurs nécessaire.
+            afficherArticle(afficheTableau[i], getproductJson._color, key) //on affiche notre article avec ses détails
             if (i === localStorage.length - 1) { // une fois que tout est affiché, on appelle les fonctions que l'on utilisera
                 suppression() //fonction utilisée qd l'utilisateur retire un article du panier
                 recalculQuantite() //calcul le nombre total d'articles et le prix total
                 changement() //observe si il y'a un changement de quantité et modifie les valeurs en conséquence.
                 const btnOrder = document.getElementById('order');
-                btnOrder.addEventListener('click', function () {
+                btnOrder.addEventListener('click', function() {
 
                     infosContact()
                 });
@@ -45,9 +45,12 @@ async function displayCart() {
 function getArticle(itemLink) { //fonction qui récupère l'article et qui le renvoie que lorsqu'il a reçu la réponse.
     return fetch(itemLink) // autrement dit on fetch cette adresse ""http://localhost:3000/api/products/" + getproductJson.itemId"
         .then(produitResponse => produitResponse.json()) // on convertit la reponse du fetch en JSON
-    // .catch (function(error) {
-    //     alert(error)
-    // })
+        .then(function (articles) {
+            return articles
+        })
+        .catch(function (error) {
+            alert(error)
+        })
 }
 
 function afficherArticle(article, color, id) {
@@ -208,7 +211,7 @@ function checkCity(value) {
     }
 }
 
-function checkMail(value) { 
+function checkMail(value) {
     var verif = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]{2,}[.][a-zA-Z]{2,3}$/;
     if (verif.exec(value) == null) {
         alert("Le format de l'adresse mail est incorrect");
