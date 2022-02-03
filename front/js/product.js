@@ -1,6 +1,6 @@
 (async function () {
-  let queryString = window.location.search; // permet de recupérer l'id dans l'URL
-  let urlParams = new URLSearchParams(queryString); // permet de recupérer l'id dans l'URL
+  let queryString = window.location.search; // permet de recupérer le query portion 
+  let urlParams = new URLSearchParams(queryString); // crée un nouvel URL avec l'id récupéré précédemment
   let id = urlParams.get('id'); // permet de recupérer l'id dans l'URL
   const item = await getItems(id) // fonction qui récup le produit dans l'API
 
@@ -20,7 +20,7 @@
   addCart.addEventListener('click', function () { // fonction qui s'exécute lorsque l'utilisateur clique sur le bouton
 
     var pickColor = document.getElementById('colors');
-    var index = pickColor.selectedIndex; // couleur sélectionnée
+    var index = pickColor.selectedIndex; // couleur sélectionnée (numéro)
     var quantity = document.getElementById('quantity').value;
 
     if (index != 0 && quantity > 0) { 

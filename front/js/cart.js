@@ -115,11 +115,11 @@ async function recalculQuantite() {
         quantite += nombre; // ajoute progressivement la quantité correspondante à chaque article
         argent += article_.price * nombre; //ajoute progressivement le prix chaque article MULTIPLIE par sa quantité
     };
-    var baliseQuant = document.getElementById('totalQuantity').innerHTML;
+    var baliseQuant = document.getElementById('totalQuantity').innerHTML; // variable qui permet le calcul de la quantité
     if (baliseQuant != "") {
         document.getElementById('totalQuantity').innerHTML = "";
     }
-    var balisePrix = document.getElementById('totalPrice').innerHTML;
+    var balisePrix = document.getElementById('totalPrice').innerHTML; // variable qui permet le calcul de la quantité
     if (balisePrix != "") {
         document.getElementById('totalPrice').innerHTML = "";
     }
@@ -172,7 +172,7 @@ function infosContact() {
 }
 
 function checkLastName(value) {
-    var check = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+    var check = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g;
     if (check.exec(value) == null) {
         alert("Le format du nom est incorrect");
         return false;
@@ -182,7 +182,7 @@ function checkLastName(value) {
 }
 
 function checkFirstName(value) {
-    var check = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+    var check = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g;
     if (check.exec(value) == null) {
         alert("Le format du prénom est incorrect");
         return false;
@@ -192,7 +192,7 @@ function checkFirstName(value) {
 }
 
 function checkAddress(value) {
-    var check = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+    var check = /^[#.0-9a-zA-Z\s,-]+$/g;
     if (check.exec(value) == null) {
         alert("Le format de l'adresse est incorrect");
         return false;
@@ -202,7 +202,7 @@ function checkAddress(value) {
 }
 
 function checkCity(value) {
-    var check = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+    var check = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/g;
     if (check.exec(value) == null) {
         alert("Le format de la ville est incorrect");
         return false;

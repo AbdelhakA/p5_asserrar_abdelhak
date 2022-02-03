@@ -1,4 +1,2 @@
-let url = new URL(window.location);
-console.log(url)
+let url = new URL(window.location); // renvoie l'adresse de la page confirmation
 document.getElementById("orderId").innerHTML = url.searchParams.get("orderId"); // affiche l'orderId via innerHTML 
-console.log(document.getElementById("orderId").innerHTML = url.searchParams.get("orderId")) 
