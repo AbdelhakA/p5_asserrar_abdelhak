@@ -1,2 +1,4 @@
 let url = new URL(window.location);
-document.getElementById("orderId").innerHTML = url.searchParams.get("orderId");
+console.log(url)
+document.getElementById("orderId").innerHTML = url.searchParams.get("orderId"); // affiche l'orderId via innerHTML 
+console.log(document.getElementById("orderId").innerHTML = url.searchParams.get("orderId")) 

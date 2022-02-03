@@ -212,8 +212,8 @@ function checkCity(value) {
 }
 
 function checkMail(value) {
-    var verif = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]{2,}[.][a-zA-Z]{2,3}$/;
-    if (verif.exec(value) == null) {
+    var check = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]{2,}[.][a-zA-Z]{2,3}$/;
+    if (check.exec(value) == null) {
         alert("Le format de l'adresse mail est incorrect");
         return false;
     } else {
@@ -270,12 +270,14 @@ function postApi(fullInfos) {
         .then((response) => response.json())
         .then((order) => {
 
-            console.log(order)
-
+            
+            
 
             localStorage.clear();
 
-            window.location = "../html/confirmation.html?orderId=" + order.orderId
+            window.location = "../html/confirmation.html?orderId=" + order.orderId // on vise la page de confirmation en y ajoutant le orderId
+
+            
         })
         .catch(function (error) {
             alert(error)

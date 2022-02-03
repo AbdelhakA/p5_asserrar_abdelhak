@@ -53,7 +53,7 @@ function getItems(productId) {
 
 function displayItem(item) {
   let productId = item._id;
-  let str = window.location.href;
+  let str = window.location.href; // montre le lien cliquable de la page sur laquelle nous sommes
   let url = new URL(str);
   let id = url.searchParams.get("id");
 
